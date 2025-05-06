@@ -21,3 +21,4 @@ RUN --mount=type=cache,target=/root/.m2 mvn -f pom.xml package -DskipTests
 # only war for volume mount
 FROM scratch
 COPY --from=hello /hello/target/ROOT.war /hello.war
+CMD ["true"]
