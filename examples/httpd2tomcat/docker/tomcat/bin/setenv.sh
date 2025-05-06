@@ -25,12 +25,12 @@ fi
 export CATALINA_OPTS="$CATALINA_OPTS -DjvmRoute=${TOMCAT_JVM_ROUTE}"
 
 # Set OTEL collector endpoint (replace with your actual collector host/port)
-ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
-ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+export OTEL_EXPORTER_OTLP_PROTOCOL=grpc
 
 # Optional metadata
-ENV OTEL_SERVICE_NAME=tomcat-cluster
-ENV OTEL_RESOURCE_ATTRIBUTES=service.namespace=tomcat,host.name=${HOSTNAME},jvmRoute=${TOMCAT_JVM_ROUTE}
+export OTEL_SERVICE_NAME=tomcat-cluster
+export OTEL_RESOURCE_ATTRIBUTES=service.namespace=tomcat,host.name=${HOSTNAME},jvmRoute=${TOMCAT_JVM_ROUTE}
 
 
 cat ${CATALINA_HOME}/bin/INFRAverse.txt
