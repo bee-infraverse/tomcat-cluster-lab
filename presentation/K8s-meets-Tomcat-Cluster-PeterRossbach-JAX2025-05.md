@@ -471,7 +471,9 @@ In Memory Session Replication with tribes
 ![w:200](./images/tomcat.png)
 ![w:400](./images/Container-Logo-Blue.png)
 
-Powerby: [Apache Tomcat  Community](https://tomcat.apache.org)
+Powerby:
+- [Apache Tomcat  Community](https://tomcat.apache.org)
+- [tomcat-cluster-lab](https://github.com/bee-infraverse/tomcat-cluster-lab)
 
 ---
 

@@ -143,7 +143,7 @@ Review:
 
 Add monitoring 
 ```shell
-cd ~/tomcat-cluster-lab/exmaples/httpd2tomcat
+cd ~/tomcat-cluster-lab/examples/httpd2tomcat
 docker compose --profile observability build
 docker-compose up -d
 docker-compose --profile observability up -d

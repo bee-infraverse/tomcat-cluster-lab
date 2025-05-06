@@ -8,7 +8,7 @@ services:
   tomcat:
     build: 
       context: ./docker/tomcat
-    image: bee42/tomcat:v11.0.6
+    image: bee42/tomcat:v11.0.6-httpd2tomcat
     volumes:
       - ./target/ROOT.war:/opt/tomcat/webapps/ROOT.war
     ports:   
