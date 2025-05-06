@@ -1,0 +1,105 @@
+lowercaseOutputLabelNames: true
+lowercaseOutputName: true
+whitelistObjectNames: [ "java.lang:*", "Catalina:*" ]
+blacklistObjectNames: []
+
+rules:
+# Memory usage
+- pattern: 'java.lang<type=Memory><>(HeapMemoryUsage|NonHeapMemoryUsage|.*Usage)'
+  name: jvm_memory_$1
+  type: GAUGE
+
+# Garbage collection
+- pattern: 'java.lang<type=GarbageCollector, name=(.+)><>CollectionCount'
+  name: jvm_gc_collection_count
+  labels:
+    gc: "$1"
+- pattern: 'java.lang<type=GarbageCollector, name=(.+)><>CollectionTime'
+  name: jvm_gc_collection_time_seconds
+  labels:
+    gc: "$1"
+  valueFactor: 0.001
+
+# Threads
+- pattern: 'java.lang<type=Threading>, name=(.+)<>ThreadCount'
+  name: jvm_threads_count
+  labels:
+    daemon: "$1"
+- pattern: 'java.lang<type=Threading, name=(.+)><>PeakThreadCount'
+  name: jvm_threads_peak
+  labels:
+    daemon: "$1"
+- pattern: 'java.lang<type=Threading, name=(.+)><>DaemonThreadCount'
+  name: jvm_threads_daemon
+  labels:
+    daemon: "$1"
+
+# Info
+- pattern: 'Catalina<type=Server><>serverInfo: (.+)'
+  name: tomcat_serverinfo
+  value: 1
+  labels:
+    serverInfo: "$1"
+  type: COUNTER
+
+# Tomcat global request processor (metrics per connector)
+- pattern: 'Catalina<type=GlobalRequestProcessor, name="(.+)"><>requestCount'
+  name: tomcat_requests_total
+  labels:
+    connector: "$1"
+
+- pattern: 'Catalina<type=GlobalRequestProcessor, name="(.+)"><>errorCount'
+  name: tomcat_requests_errors_total
+  labels:
+    connector: "$1"
+
+- pattern: 'Catalina<type=GlobalRequestProcessor, name="(.+)"><>processingTime'
+  name: tomcat_request_processing_time_seconds_total
+  labels:
+    connector: "$1"
+  valueFactor: 0.001
+
+- pattern: 'Catalina<type=GlobalRequestProcessor, name="(.+)"><>bytesReceived'
+  name: tomcat_bytes_received_total
+  labels:
+    connector: "$1"
+
+- pattern: 'Catalina<type=GlobalRequestProcessor, name="(.+)"><>bytesSent'
+  name: tomcat_bytes_sent_total
+  labels:
+    connector: "$1"
+
+# Thread pool stats
+- pattern: 'Catalina<type=ThreadPool, name="(.+)"><>currentThreadsBusy'
+  name: tomcat_threads_busy
+  labels:
+    connector: "$1"
+
+- pattern: 'Catalina<type=ThreadPool, name="(.+)"><>currentThreadCount'
+  name: tomcat_threads_current
+  labels:
+    connector: "$1"
+
+- pattern: 'Catalina<type=ThreadPool, name="(.+)"><>maxThreads'
+  name: tomcat_threads_max
+  labels:
+    connector: "$1"
+
+# Sessions
+- pattern: 'Catalina<type=Manager, context="(.+)", host="(.+)"><>activeSessions'
+  name: tomcat_sessions_active
+  labels:
+    context: "$1"
+    host: "$2"
+
+- pattern: 'Catalina<type=Manager, context="(.+)", host="(.+)"><>sessionCounter'
+  name: tomcat_sessions_created_total
+  labels:
+    context: "$1"
+    host: "$2"
+
+- pattern: 'Catalina<type=Manager, context="(.+)", host="(.+)"><>expiredSessions'
+  name: tomcat_sessions_expired_total
+  labels:
+    context: "$1"
+    host: "$2"

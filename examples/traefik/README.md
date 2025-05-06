@@ -228,9 +228,9 @@ May 04, 2025 2:58:49 PM PrintXmxXms main
 INFO: Max Memory (xmx) : 694mb
 ```
 
-### Use UBI9 images
+### Use UBI9 images (untested)
 
-* You need a Red Hat Account!
+* You need a Red Hat Account! Hups...
 
 ```shell
 cat >Dockerfile <<EOF
