@@ -193,7 +193,17 @@ helm install cert-manager \
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 kubectl patch storageclass local-path \
   -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-  
+helm repo add traefik https://helm.traefik.io/traefik
+kubectl create ns traefik
+helm install --namespace=traefik \
+  traefik traefik/traefik
+helm upgrade --install traefik traefik/traefik --namespace=traefik \
+  --set service.type=NodePort \
+  --set service.ports.web.nodePort=30080 \
+  --set service.ports.websecure.nodePort=30443 \
+  --set logs.general.level=DEBUG \
+  --set logs.access.enabled=true
+
 sudo apt update
 sudo apt install -y skopeo
 skopeo copy docker://tomcat:11-jre21 docker://registry.iximiuz.com/bee42/tomcat:11-jre21
@@ -211,18 +221,28 @@ k exec -it tomcat-1 -c tomcat -- env | grep CATALINA_OPTS
 
 # check RBAC auth
 kubectl auth can-i get pods --as=system:serviceaccount:tomcat:tomcat
-kubectl auth can-i get list --as=system:serviceaccount:tomcat:tomcat
+kubectl auth can-i list pods --as=system:serviceaccount:tomcat:tomcat
 k exec -it tomcat-0 -c tomcat -- /bin/bash
 APISERVER=https://kubernetes.default.svc.cluster.local
 TOKEN=$(cat /run/secrets/kubernetes.io/serviceaccount/token)
 curl -s $APISERVER/api/v1/namespaces/tomcat/pods  \
   --header "Authorization: Bearer $TOKEN" \
   --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt | more
-INGRESS_IP=$(k get node k3d-tomcat-server-0 -o jsonpath="{.status.addresses[0].address}")
+  
+INGRESS_IP=$(k get node node-02 -o jsonpath="{.status.addresses[0].address}")
 COOKIE="Cookie: $(curl -k -i -s --resolve "tomcat.dev:443:${INGRESS_IP}" https://tomcat.dev:443/ |grep set-cookie  | awk 'BEGIN { FS="[ ]" } ; { print $2 }' |tr -d "\n")"
 
+
+web
+nodePort: 30080
+    websecure:
+      nodePort: 30443
+
 # Create Session
-curl -v -k -H "${COOKIE}" --resolve "tomcat.dev:443:${INGRESS_IP}" https://tomcat.dev:443/
+INGRESS_IP=172.16.0.4
+curl -v -k -c cookies.txt -b cookies.txt --resolve "tomcat.dev:443:${INGRESS_IP}:30443" https://tomcat.dev:443/
+
+curl -v -k -H "${COOKIE}" --resolve "tomcat.dev:443:${INGRESS_IP}:30443" https://tomcat.dev:443/
 # Modify session
 curl -v -k -H "${COOKIE}" --resolve "tomcat.dev:443:${INGRESS_IP}" https://tomcat.dev:443/\?name\=hello
 # Review
