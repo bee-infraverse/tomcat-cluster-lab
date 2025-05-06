@@ -145,9 +145,14 @@ Add monitoring
 ```shell
 cd ~/tomcat-cluster-lab/examples/httpd2tomcat
 docker compose --profile observability build
+docker build -t bee42/hello-war:0.1.0
+docker export $(docker create --name hello bee42/hello-war:0.1.0) -o target/hello.tar
+docker rm hello
+
 docker compose up -d
 docker compose --profile observability up -d
-curl $(docker compose port 80)/hello
+curl $(docker compose port httpd 80)/hello
+curl --user jolokia:jolokia $(docker compose port httpd 80)/jolokia
 # access observability
 docker compose exec httpd curl -s "127.0.0.1:9114/jk-watch?mime=xml"
 docker compose exec httpd curl -s "127.0.0.1:9118/server-status?auto"

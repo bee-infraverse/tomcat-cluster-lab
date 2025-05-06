@@ -15,7 +15,7 @@ public class SessionLangServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.setAttribute(LANG_PARAM_NAME, 
-                request.getParameter(LANG_PARAM_NAME);
+                request.getParameter(LANG_PARAM_NAME));
     }
 
     protected void doGet(HttpServletRequest request, 
