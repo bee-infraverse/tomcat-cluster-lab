@@ -145,17 +145,26 @@ Add monitoring
 ```shell
 cd ~/tomcat-cluster-lab/examples/httpd2tomcat
 docker compose --profile observability build
+
+# TODO better creation...
 docker build -t bee42/hello-war:0.1.0
-docker export $(docker create --name hello bee42/hello-war:0.1.0) -o target/hello.tar
-docker rm hello
+docker export $(docker create --name hello bee42/hello-war:0.1.0 true ) -o hello.tar
+tar xf hello.tar hello.war
+mkdir -p target
+mv hello.war target/ROOT.war
+docker rm hello 
+rm hello.tar
 
 docker compose up -d
 docker compose --profile observability up -d
-curl $(docker compose port httpd 80)/hello
+curl $(docker compose port httpd 80)/
 curl --user jolokia:jolokia $(docker compose port httpd 80)/jolokia
 # access observability
-docker compose exec httpd curl -s "127.0.0.1:9114/jk-watch?mime=xml"
-docker compose exec httpd curl -s "127.0.0.1:9118/server-status?auto"
+docker compose exec httpd curl -s "127.0.0.1:80/jk-watch?mime=xml"
+docker compose exec httpd curl -s "127.0.0.1:80/server-status?auto"
+
+docker compose exec httpd curl -s "127.0.0.1:9114/metrics"
+docker compose exec httpd curl -s "127.0.0.1:9117/metrics"
 docker compose exec httpd curl -s "tomcat:8004/metrics"
 ```
 
@@ -173,7 +182,7 @@ docker compose exec httpd curl -s "tomcat:8004/metrics"
 ### Kubernetes scale tomcat 
 
 ```shell
-cd ~/tomcat-cluster-lab/exmaples/k8s-tomcat-cluster
+cd ~/tomcat-cluster-lab/examples/k8s-tomcat-cluster
 k create namespace tomcat
 k ns tomcat
 k apply -k .
