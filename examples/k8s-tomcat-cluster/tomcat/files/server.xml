@@ -35,8 +35,10 @@
       </Cluster>
       <Host name="localhost"  appBase="webapps"
             unpackWARs="false" autoDeploy="true">
+        <!--    
         <Valve className="io.bee42.catalina.valves.AccessLogStdoutValve"
                pattern="%{begin:yyyy-MM-dd'T'HH:mm:ss:SSSZ}t [access              ] INFO io.bee42.catalina.valves.AccessLogValve access - %h &quot;%r&quot; &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot; %s %b &quot;%I&quot; %D %S %{tomcat}c" />
+        -->
         <Valve className="org.apache.catalina.valves.HealthCheckValve" path="/health" />
       </Host>
     </Engine>
