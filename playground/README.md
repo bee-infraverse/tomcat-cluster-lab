@@ -195,8 +195,6 @@ kubectl patch storageclass local-path \
   -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 helm repo add traefik https://helm.traefik.io/traefik
 kubectl create ns traefik
-helm install --namespace=traefik \
-  traefik traefik/traefik
 helm upgrade --install traefik traefik/traefik --namespace=traefik \
   --set service.type=NodePort \
   --set service.ports.web.nodePort=30080 \
@@ -240,6 +238,14 @@ nodePort: 30080
 
 # Create Session
 INGRESS_IP=172.16.0.4
+HTTPS_PORT=$(kubectl get -n traefik svc traefik -o json | jq '.spec.ports[] | select(.name=="websecure") | .nodePort')
+HTTP_PORT=$(kubectl get -n traefik svc traefik -o json | jq '.spec.ports[] | select(.name=="web") | .nodePort')
+curl -i -c cookies.txt -b cookies.txt -H "Host: tomcat.dev" http://${INGRESS_IP}:${HTTP_PORT}
+
+
+# Upss...
+curl -v -k -c cookies.txt -b cookies.txt --resolve tomcat.dev:443:${INGRESS_IP} https://tomcat.dev:${HTTPS_PORT}/
+
 curl -v -k -c cookies.txt -b cookies.txt --resolve "tomcat.dev:443:${INGRESS_IP}:30443" https://tomcat.dev:443/
 
 curl -v -k -H "${COOKIE}" --resolve "tomcat.dev:443:${INGRESS_IP}:30443" https://tomcat.dev:443/

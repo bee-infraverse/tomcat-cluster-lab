@@ -7,7 +7,7 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
     traefik.ingress.kubernetes.io/service.sticky.cookie.name: "TSESSIONID"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
+    traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "false"
     traefik.ingress.kubernetes.io/service.sticky.cookie.httponly: "true"
     traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: "strict"
 spec:
