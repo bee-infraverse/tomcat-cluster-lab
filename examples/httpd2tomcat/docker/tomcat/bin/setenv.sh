@@ -3,7 +3,7 @@ export LC_ALL="en_US.utf-8"
 export LANG="$LC_ALL"
 export CATALINA_OPTS="${CATALINA_OPTS} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=8008 -Dcom.sun.management.jmxremote.rmi.port=8008 -Djava.rmi.server.hostname=127.0.0.1"
 export JAVA_OPTS="${JAVA_OPTS} -javaagent:/opt/tomcat/lib/jmx_prometheus_javaagent.jar=8004:/opt/tomcat/conf/jmx_config.yaml"
-export JAVA_OPTS="${JAVA_OPTS} -javaagent:/opt/tomcat/lib/-javaagent:/opentelemetry-javaagent.jar"
+export JAVA_OPTS="${JAVA_OPTS} -javaagent:/opt/tomcat/lib/opentelemetry-javaagent.jar"
 export JAVA_OPTS="${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom"
 export JAVA_OPTS="$JAVA_OPTS -Duser.language=en -Duser.country=US"
 
