@@ -1,0 +1,116 @@
+# This is the identity the Pods will run as.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: debug
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: debug
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - pods
+  verbs:
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: debug
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: debug
+subjects:
+- kind: ServiceAccount
+  name: debug
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: debug
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - nodes
+  verbs:
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: debug
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: debug
+subjects:
+- kind: ServiceAccount
+  name: debug
+  namespace: debug
+---
+# This is the actual workload.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debug
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debug
+  template:
+    metadata:
+      labels:
+        app: debug
+    spec:
+      serviceAccountName: debug
+      securityContext:
+        fsGroup: 65534
+      containers:
+      - name: server
+        image: nginx
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: content
+          readOnly: true
+      - name: sidecar
+        image: bee42/debug-shell:v1.29.2
+        env:
+        - name: POD
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        args:
+        - bash
+        - -c
+        - |
+          while true; do
+            kubectl -n $NAMESPACE get pod $PDO -o json | jq '.status' > /data/this-pod-status.json
+            kubectl get node $NODE -o json | jq '.status' > /data/this-node-status.json
+            sleep 30
+          done
+        volumeMounts:
+        - name: content
+          mountPath: /data
+        securityContext:
+          runAsUser: 65534
+          runAsGroup: 65534
+      volumes:
+      - name: content
+        emptyDir: {}
+      terminationGracePeriodSeconds: 5

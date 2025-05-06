@@ -1,0 +1,39 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+FROM debian:bullseye
+
+RUN apt-get update && apt-get -y upgrade && apt-get install -y \
+    apache2 apache2-dev gcc make curl tar \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN curl -SL https://downloads.apache.org/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.50-src.tar.gz -o tomcat-connectors-1.2.50-src.tar.gz \
+    && mkdir -p src/tomcat-connectors \
+    && tar xzf tomcat-connectors-1.2.50-src.tar.gz -C src/tomcat-connectors --strip-components=1 \
+    && cd src/tomcat-connectors/native/ \
+    && ./configure --with-apxs=/usr/bin/apxs \
+    && make \
+    && mkdir -p /etc/apache2/modules/ \
+    && cp apache-2.0/mod_jk.so /etc/apache2/modules/ \
+    && cd / \
+    && rm -rf src/ \
+    && rm -f tomcat-connectors-1.2.50-src.tar.gz
+
+ADD mod_jk.conf /etc/apache2/conf-available/
+ADD workers.properties /etc/apache2/
+RUN ln -s /etc/apache2/conf-available/mod_jk.conf /etc/apache2/conf-enabled/
+
+EXPOSE 80
+
+ADD docker-entrypoint.sh /docker-entrypoint.sh
+
+CMD ["/docker-entrypoint.sh"]

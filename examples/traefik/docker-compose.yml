@@ -1,0 +1,43 @@
+services:
+  traefik:
+    image: "traefik:v3.3.6"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80"
+      - "8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    profiles:
+      - traefik
+  tomcat:
+    build: 
+      context: ./tomcat
+    image: bee42/tomcat-simple:v11.0.6
+    ports:
+      - "8080"
+#    cpus: "2.0"
+#    mem_reservation: "100M"
+#    mem_limit: "1g"
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 1g
+#          cpus: "2.0"
+#        reservations:
+#          cpus: '0.1'
+#          memory: 100M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tomcat.rule=Host(`tomcat.local`)"
+      - "traefik.http.routers.tomcat.entrypoints=web"
+      - "traefik.http.services.tomcat.loadbalancer.server.port=8080"
+      # Sticky session enabled
+      - "traefik.http.services.tomcat.loadbalancer.sticky.cookie=true"
+      - "traefik.http.services.tomcat.loadbalancer.sticky.cookie.name=TSESSIONID"
+      - "traefik.http.services.tomcat.loadbalancer.sticky.cookie.httpOnly=true"
+      - "traefik.http.services.tomcat.loadbalancer.sticky.cookie.secure=false"

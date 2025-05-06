@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- tomcat-svc.yaml
+- tomcat-member.yaml
+- tomcat-sts.yaml
+- tomcat-ingress.yaml
+configMapGenerator:
+- name: tomcat-bin
+  files:
+  - files/setenv.sh
+- name: jmx-exporter
+  files:
+  - files/jmx-tomcat-prometheus.yml
+- name: tomcat-conf
+  files:
+  - files/server.xml
+  - files/tomcat-users.xml
+  - files/logging.properties
+- name: user-app
+  files:
+  - files/index.jsp
+  - files/web.xml

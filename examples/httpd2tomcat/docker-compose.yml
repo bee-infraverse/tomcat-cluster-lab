@@ -1,0 +1,66 @@
+services:
+  httpd:
+    build: 
+      context: ./docker/httpd
+    image: bee42/httpd:v2.4.62
+    ports:
+      - "80"
+  tomcat:
+    build: 
+      context: ./docker/tomcat
+    image: bee42/tomcat:v11.0.6
+    volumes:
+      - ./target/ROOT.war:/opt/tomcat/webapps/ROOT.war
+    ports:   
+      - "8080"
+  apache-exporter:
+    build:
+      context: ./docker/apache-exporter
+    image: bee42/apache-exporter:v1.0.10
+    environment:
+      - SCRAPE_URI=http://127.0.0.1/server-status/?auto
+    network_mode: "service:httpd"
+    depends_on:
+      - httpd
+    profiles:
+      - observability
+  modjk-exporter:
+    build:
+      context: ./docker/modjk-exporter
+    image: bee42/modjk-exporter:v0.1.0
+    network_mode: "service:httpd"
+    depends_on:
+      - httpd
+    profiles:
+      - observability
+  prometheus:
+    image: prom/prometheus:v3.3.0
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    profiles:
+      - observability
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.123.0
+    volumes:
+      - ./docker/opentelemetry/config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "55679:55679"
+    depends_on:
+      - jaeger
+    profiles:
+      - observability
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    ports:
+      - "16686:16686"
+      - "44317:4317"
+      - "44318:4318"
+      - "49411:9411"
+    profiles:
+      - observability

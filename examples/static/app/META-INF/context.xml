@@ -1,0 +1,11 @@
+<Context>
+
+  <Resources>
+    <PreResources
+      className="org.apache.catalina.webresources.DirResourceSet"
+      base="${catalina.base}/files"
+      webAppMount="/static"
+     />
+  </Resources>
+
+</Context>

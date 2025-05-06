@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server port="8005" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+  </GlobalNamingResources>
+
+  <Service name="Catalina">
+    <Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="443" />
+    <Connector port="8009" 
+      protocol="AJP/1.3"
+      redirectPort="443"
+      address="0.0.0.0"
+      secretRequired="true"
+      secret="mySecretKey" />
+
+    <Engine name="Catalina" defaultHost="localhost" jvmRoute="${jvmRoute}">
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+               resourceName="UserDatabase"/>
+      </Realm>
+      <Host name="localhost" appBase="webapps"
+            unpackWARs="false" autoDeploy="true">
+        <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster" channelSendOptions="8">
+          <Manager className="org.apache.catalina.ha.session.DeltaManager"
+                    expireSessionsOnShutdown="false"
+                    notifyListenersOnReplication="true"/>
+
+<!--            <Channel className="org.apache.catalina.tribes.group.GroupChannel">
+              <Membership className="org.apache.catalina.tribes.membership.cloud.CloudMembershipService"
+                          membershipProviderClassName="kubernetes" />
+            </Channel>
+-->
+
+          <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
+                filter=".*.gif;.*.jpg;.*.png;.*.css"/>
+          <Valve className="org.apache.catalina.ha.session.JvmRouteBinderValve" />
+          <ClusterListener className="org.apache.catalina.ha.session.ClusterSessionListener"/>
+   
+        </Cluster>
+
+        <Valve className="io.bee42.catalina.valves.AccessLogStdoutValve"
+               pattern="%{begin:yyyy-MM-dd'T'HH:mm:ss:SSSZ}t [access              ] INFO io.bee42.catalina.valves.AccessLogValve access - %h &quot;%r&quot; &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot; %s %b &quot;%I&quot; %D %S %{tomcat}c" />
+        <Valve className="org.apache.catalina.valves.HealthCheckValve" path="/health" />
+      </Host>
+    </Engine>
+  </Service>
+</Server>
