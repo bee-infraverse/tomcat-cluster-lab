@@ -183,8 +183,23 @@ docker compose exec httpd curl -s "tomcat:8004/metrics"
 
 ```shell
 cd ~/tomcat-cluster-lab/examples/k8s-tomcat-cluster
+helm repo add jetstack https://charts.jetstack.io
+kubectl apply -f \
+  https://github.com/cert-manager/cert-manager/releases/download/v1.17.1/cert-manager.crds.yaml
+helm install cert-manager \
+   --create-namespace \
+   --namespace cert-manager \
+    --version v1.17.1 jetstack/cert-manager
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+
+sudo apt update
+sudo apt install -y skopeo
+skopeo copy docker://tomcat:11-jre21 docker://registry.iximiuz.com/bee42/tomcat:11-jre21
+curl https://registry.iximiuz.com/v2/_catalog
+{"repositories":["bee42/tomcat"]}
+
 k create namespace tomcat
-k ns tomcat
+k config set-context --current --namespace tomcat
 k apply -k .
 k get pods -o wide -l app=tomcat -w
 
@@ -220,6 +235,18 @@ k logs tomcat-1 -c tomcat
 - Stateful
 - Crazy app as config
 
+```yaml
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - tomcat
+            topologyKey: "kubernetes.io/hostname"
+```
 
 ## More
 

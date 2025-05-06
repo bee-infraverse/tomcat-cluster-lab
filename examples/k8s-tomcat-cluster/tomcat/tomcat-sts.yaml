@@ -119,16 +119,6 @@ spec:
           subPath: jmx-tomcat-prometheus.yml
       automountServiceAccountToken: false
       serviceAccountName: tomcat
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - tomcat
-            topologyKey: "kubernetes.io/hostname"
       volumes:
       - name: tomcat-bin
         configMap:
