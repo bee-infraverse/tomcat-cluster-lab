@@ -118,6 +118,8 @@ docker compose ps
 docker compose up --scale tomcat=2 -d
 docker compose logs --index=2 tomcat
 docker compose exec --index=1 tomcat /bin/bash
+ps -ef
+exit
 
 docker restart clustertest-tomcat-1
 curl -iL http://$(docker compose port --index=1 tomcat 8080)/clustertest
