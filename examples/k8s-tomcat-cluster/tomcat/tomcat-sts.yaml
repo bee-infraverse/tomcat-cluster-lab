@@ -30,6 +30,8 @@ spec:
       - name: tomcat
         image: registry.iximiuz.com/bee42/tomcat:11-jre21
         imagePullPolicy: IfNotPresent
+        command: ["sleep"]
+        args: ["infinity"]
         ports:
         - name: http
           containerPort: 8080
