@@ -517,3 +517,11 @@ Powerby:
 
 ![](./images/iximiuz-lab-logo.png) [Ivan Velichko iximiuz labs](https://iximiuz.com) 
 ![w:200](./images/bee42.png)[© 2025 bee42 solutions gmbh](https://bee42.com)
+
+---
+
+### Container Trainings iximiuz lab
+
+![w:800](./images/iximiuz-lab.png)
+
+- https://iximiuz.com
