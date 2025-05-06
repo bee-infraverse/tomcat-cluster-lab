@@ -243,7 +243,7 @@ classDiagram
 
 ## Route Tomcat with Traefik
 
-![]()
+![w:800](./images/Traefik-Tomcat.png)
 
 ---
 
@@ -408,6 +408,42 @@ In Memory Session Replication with tribes
 ### Kubernetes Membership - API Server
 
 ![w:600](./images/Tomcat-Cluster-KubernetesMembership.png)
+
+---
+### Next Level - Kubernetes Tomcat Operator 
+
+<div class="mermaid">
+graph LR
+  A[Kubernetes Cluster]
+
+  subgraph Operator
+    B[Tomcat Operator]
+    B1[CRD: TomcatCluster]
+  end
+
+  A --> B
+  B --> B1
+  B1 --> C[StatefulSet: tomcat-<replicas>]
+  B1 --> D[Service: headless + clusterIP]
+  B1 --> E[ConfigMap/Secret: app config, credentials]
+  B1 --> F[PVC: per replica]
+
+  C --> G[Pod: tomcat-0]
+  C --> H[Pod: tomcat-1]
+
+  G --> F
+  H --> F
+
+  D --> I[Ingress or LoadBalancer]
+  I --> User[User / Browser]
+
+  style A fill:#f9f,stroke:#333,stroke-width:2px
+  style B fill:#bbf,stroke:#333
+  style B1 fill:#ddf,stroke:#333
+  style C fill:#afa
+  style D fill:#cff
+  style F fill:#ffd
+</div>
 
 ---
 
