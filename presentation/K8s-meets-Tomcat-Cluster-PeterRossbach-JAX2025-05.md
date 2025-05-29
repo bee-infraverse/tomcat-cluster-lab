@@ -6,8 +6,13 @@ header: '![w:48 h:48](./images/bee-INFRAverse-logo.png) Apache Tomcat Cluster Re
 footer: '`├─☺︎─┤` The humble paint signer: <peter.rossbach@bee42.com>  copyright 2025 - bee42 solutions gmbh'
 style: @import url('https://unpkg.com/tailwindcss@^2/dist/utilities.min.css');
 theme: default
+author: Peter Rossbach
 ---
-
+<!-- Add this anywhere in your Markdown file -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
 
 # Simplifying Apache Tomcat Session Clustering with Kubernetes
 
@@ -51,7 +56,6 @@ Keeping state synchronized across multiple **Apache Tomcat** nodes is a well-est
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 timeline
     title From Collaboration to Creation: Building the Right Web Engine Together
-
     1995 : Jetty WebServer Contest : Servlet API 1.x
     1996 : Jeeves : Jserv : Early Servlet Container by James Duncan Davidson 
     1998 : Servlet 2.1 /2.2 : Jo! Servlet Engine : Early Servlet Books
@@ -69,7 +73,6 @@ timeline
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 timeline
     title Evolving Java Web: A Community’s Journey to the Right Solution
-
     2006 : Tomcat 6 : Servlet 2.5
     2011 : Tomcat 7 : Servlet 3.0 : WebFragments
     2014 : Tomcat 8 : Servlet 3.1 : Spring Boot Adopts Embedded Tomcat
@@ -130,13 +133,11 @@ classDiagram
         +getServletConfig()
         +getServletInfo()
     }
-
     class GenericServlet {
         +log()
         +init()
         +service()
     }
-
     class HttpServlet {
         +doGet()
         +doPost()
@@ -146,7 +147,6 @@ classDiagram
         +doOptions()
         +doTrace()
     }
-
     class ServletRequest {
         +getParameter()
         +getInputStream()
@@ -154,13 +154,11 @@ classDiagram
         +getReader()
         +getRemoteAddr()
     }
-
     class ServletResponse {
         +getWriter()
         +setContentType()
         +setCharacterEncoding()
     }
-
     class HttpServletRequest {
         +getSession()
         +getCookies()
@@ -169,48 +167,39 @@ classDiagram
         +getRequestURI()
         +getHttpServletMapping()
     }
-
     class HttpServletResponse {
         +setStatus()
         +addCookie()
         +sendError()
         +sendRedirect()
     }
-
     class ServletContext {
         +getAttribute()
         +getInitParameter()
         +getResource()
     }
-
     class Filter {
         +doFilter()
         +init()
         +destroy()
     }
-
     class FilterChain {
         +doFilter()
     }
-
     class AsyncContext {
         +start()
         +dispatch()
         +complete()
     }
-
     class ServletConfig {
         +getServletName()
         +getInitParameter()
         +getServletContext()
     }
-
     Servlet <|-- GenericServlet
     GenericServlet <|-- HttpServlet
-
     ServletRequest <|-- HttpServletRequest
     ServletResponse <|-- HttpServletResponse
-
     Servlet --> ServletConfig
     Servlet --> ServletContext
     Filter --> FilterChain
@@ -415,28 +404,22 @@ In Memory Session Replication with tribes
 <div class="mermaid">
 graph LR
   A[Kubernetes Cluster]
-
   subgraph Operator
     B[Tomcat Operator]
     B1[CRD: TomcatCluster]
   end
-
   A --> B
   B --> B1
-  B1 --> C[StatefulSet: tomcat-<replicas>]
+  B1 --> C[StatefulSet: tomcat-replicas]
   B1 --> D[Service: headless + clusterIP]
   B1 --> E[ConfigMap/Secret: app config, credentials]
   B1 --> F[PVC: per replica]
-
   C --> G[Pod: tomcat-0]
   C --> H[Pod: tomcat-1]
-
   G --> F
   H --> F
-
   D --> I[Ingress or LoadBalancer]
   I --> User[User / Browser]
-
   style A fill:#f9f,stroke:#333,stroke-width:2px
   style B fill:#bbf,stroke:#333
   style B1 fill:#ddf,stroke:#333

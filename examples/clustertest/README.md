@@ -24,9 +24,16 @@ docker compsoe up -d
 docker compose port --index=1 tomcat 8080
 # open browser an set hello vars....
 # http://127.0.0.1:64414/clustertest/
+
+curl -iL -c cookies.txt -b cookies.txt http://$(docker compose port --index=1 tomcat 8080)/clustertest/snoopy.jsp
+curl -iL -c cookies.txt -b cookies.txt http://$(docker compose port --index=1 tomcat 8080)/clustertest/setsession.jsp
+curl -iL -c cookies.txt -b cookies.txt http://$(docker compose port --index=1 tomcat 8080)/clustertest/session.jsp
+
 docker compose up --scale tomcat=2 -d
 docker compose port --index=2 tomcat 8080
 # open browser an set hello vars....
+# session goes to the other node....
+curl -iL -c cookies.txt -b cookies.txt http://$(docker compose port --index=2 tomcat 8080)/clustertest/session.jsp
 # set correct port...
 # http://127.0.0.1:63614/clustertest/
 

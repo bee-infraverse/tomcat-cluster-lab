@@ -1,4 +1,21 @@
-# Start indvidual playground
+## Demo plot
+
+```text
+              .-') _            _  .-')     ('-.          (`-.      ('-.  _  .-')    .-')      ('-.   
+             ( OO ) )          ( \( -O )   ( OO ).-.    _(OO  )_  _(  OO)( \( -O )  ( OO ).  _(  OO)  
+  ,-.-') ,--./ ,--,'    ,------.,------.   / . --. /,--(_/   ,. \(,------.,------. (_)---\_)(,------. 
+  |  |OO)|   \ |  |\ ('-| _.---'|   /`. '  | \-.  \ \   \   /(__/ |  .---'|   /`. '/    _ |  |  .---' 
+  |  |  \|    \|  | )(OO|(_\    |  /  | |.-'-'  |  | \   \ /   /  |  |    |  /  | |\  :` `.  |  |     
+  |  |(_/|  .     |/ /  |  '--. |  |_.' | \| |_.'  |  \   '   /, (|  '--. |  |_.' | '..`''.)(|  '--.  
+ ,|  |_.'|  |\    |  \_)|  .--' |  .  '.'  |  .-.  |   \     /__) |  .--' |  .  '.'.-._)   \ |  .--'  
+(_|  |   |  | \   |    \|  |_)  |  |\  \   |  | |  |    \   /     |  `---.|  |\  \ \       / |  `---. 
+  `--'   `--'  `--'     `--'    `--' '--'  `--' `--'     `-'      `------'`--' '--' `-----'  `------' 
+```
+
+## Start indvidual playground
+
+- registry a premium account on [iximiuz labs](https://labs.iximiuz.com) :)
+- install labctl
 
 ```shell
 labctl playground create --help
@@ -428,6 +445,7 @@ vscode plugins:
 ```shell
 code --install-extension marp-team.marp-vscode
 code --install-extension bierner.markdown-mermaid
+# kubernets plugin?
 ```
 
 iximiuz tips:
@@ -436,3 +454,21 @@ A standalone playground can be a good option, actually. With custom playgrounds 
 
 - Create "rich" markdown description [openbao-vault](https://labs.iximiuz.com/playgrounds/openbao-vault-b46f1fb6)
 - Embed the slides as a (running) playground tab [istio-101](https://labs.iximiuz.com/playgrounds/istio-101-0c2397b4 - it embeds some internally running web app, but it could be your tiny little server serving the slides)
+
+## Tomcat with native images
+
+- https://tomcat.apache.org/tomcat-11.0-doc/graal.html
+
+
+## todos
+
+- Integration mod_jk rack loadbalancing
+  - config-template workers properties
+  - Reconfig jk_manager api vs restart
+- Multiple Version Deployment
+- CRDS webapplication
+  - Create WAR file artifacts
+  - Extract to folder
+  - context.xml
+  - New version or replace
+- Problem of Header Size AJP Protocol (8K limit)
